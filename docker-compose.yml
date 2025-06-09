@@ -21,23 +21,40 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
   connect:
-    image: debezium/connect:2.5
+    image: confluentinc/cp-kafka-connect:7.5.0
+    user: root
+    command:
+      - bash
+      - -c
+      - |
+        # Install Debezium MySQL connector
+        confluent-hub install --no-prompt debezium/debezium-connector-mysql:2.5.0
+        
+        # Install JDBC connector
+        confluent-hub install --no-prompt confluentinc/kafka-connect-jdbc:10.7.4
+        
+        # Start Kafka Connect  
+        /etc/confluent/docker/run
     depends_on:
       - kafka
     ports:
       - "8083:8083"
     environment:
-      BOOTSTRAP_SERVERS: kafka:9092
-      GROUP_ID: 1
-      CONFIG_STORAGE_TOPIC: debezium_connect_configs
-      OFFSET_STORAGE_TOPIC: debezium_connect_offsets
-      STATUS_STORAGE_TOPIC: debezium_connect_statuses
+      CONNECT_BOOTSTRAP_SERVERS: kafka:9092
+      CONNECT_GROUP_ID: 1
+      CONNECT_CONFIG_STORAGE_TOPIC: debezium_connect_configs
+      CONNECT_OFFSET_STORAGE_TOPIC: debezium_connect_offsets
+      CONNECT_STATUS_STORAGE_TOPIC: debezium_connect_statuses
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
       CONNECT_KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
       CONNECT_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
       CONNECT_REST_ADVERTISED_HOST_NAME: connect
-      CONNECT_PLUGIN_PATH: /kafka/connect,/debezium-connector
+      CONNECT_PLUGIN_PATH: /kafka/connect,/usr/share/confluent-hub-components
     volumes:
       - ./data:/data
+      - ./data/plugins:/kafka/connect
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
@@ -48,3 +65,22 @@ services:
     environment:
       KAFKA_CLUSTERS_0_NAME: default
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+
+  sqlite-shell:
+    image: nouchka/sqlite3:latest
+    container_name: sqlite-shell
+    volumes:
+      - ./data:/data
+    entrypoint: tail -f /dev/null
+
+  sqlite-web:
+      image: coleifer/sqlite-web
+      container_name: sqlite-web
+      depends_on:
+        - connect
+      ports:
+        - "8081:8080"
+      volumes:
+        - ./data:/root/sqlite
+      working_dir: /root/sqlite
+      command: ["sqlite_web", "--host", "0.0.0.0", "cambios.db"]
