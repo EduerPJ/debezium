@@ -9,10 +9,16 @@ curl -X POST http://localhost:8083/connectors \
     "config": {
       "connector.class": "io.confluent.connect.jdbc.JdbcSinkConnector",
       "tasks.max": "1",
-      "topics.regex": "zalvadora_local_2\\..*",
+      "topics": "zalvadora_local_2.users",
       "connection.url": "jdbc:sqlite:/data/cambios.db",
       "auto.create": "true",
-      "insert.mode": "insert"
+      "auto.evolve": "true",
+      "insert.mode": "insert",
+      "pk.mode": "record_value",
+      "pk.fields": "id",
+      "transforms": "flatten",
+      "transforms.flatten.type": "org.apache.kafka.connect.transforms.Flatten$Value",
+      "transforms.flatten.delimiter": "_"
     }
   }'
 

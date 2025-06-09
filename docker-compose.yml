@@ -21,37 +21,45 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
   connect:
-    image: confluentinc/cp-kafka-connect:7.5.0
+    image: quay.io/debezium/connect:2.5
     user: root
     command:
       - bash
       - -c
       - |
-        # Install Debezium MySQL connector
-        confluent-hub install --no-prompt debezium/debezium-connector-mysql:2.5.0
-        
-        # Install JDBC connector
-        confluent-hub install --no-prompt confluentinc/kafka-connect-jdbc:10.7.4
-        
-        # Start Kafka Connect  
-        /etc/confluent/docker/run
+        # Download and install JDBC connector
+        cd /tmp
+        curl -L -o kafka-connect-jdbc-10.7.4.jar https://packages.confluent.io/maven/io/confluent/kafka-connect-jdbc/10.7.4/kafka-connect-jdbc-10.7.4.jar
+        mkdir -p /kafka/connect/jdbc
+        cp kafka-connect-jdbc-10.7.4.jar /kafka/connect/jdbc/
+
+        # Copy SQLite driver to JDBC directory
+        cp /kafka/connect/sqlite-jdbc-3.44.1.0.jar /kafka/connect/jdbc/
+
+        # Download and install Debezium MySQL connector
+        curl -L -o debezium-connector-mysql-2.5.0.Final-plugin.tar.gz https://repo1.maven.org/maven2/io/debezium/debezium-connector-mysql/2.5.0.Final/debezium-connector-mysql-2.5.0.Final-plugin.tar.gz
+        mkdir -p /kafka/connect/debezium-mysql
+        tar -xzf debezium-connector-mysql-2.5.0.Final-plugin.tar.gz -C /kafka/connect/debezium-mysql --strip-components=1
+
+        # Start Kafka Connect
+        /docker-entrypoint.sh start
     depends_on:
       - kafka
     ports:
       - "8083:8083"
     environment:
-      CONNECT_BOOTSTRAP_SERVERS: kafka:9092
-      CONNECT_GROUP_ID: 1
-      CONNECT_CONFIG_STORAGE_TOPIC: debezium_connect_configs
-      CONNECT_OFFSET_STORAGE_TOPIC: debezium_connect_offsets
-      CONNECT_STATUS_STORAGE_TOPIC: debezium_connect_statuses
-      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: 1
-      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: 1
-      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: 1
-      CONNECT_KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
-      CONNECT_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      BOOTSTRAP_SERVERS: kafka:9092
+      GROUP_ID: 1
+      CONFIG_STORAGE_TOPIC: debezium_connect_configs
+      OFFSET_STORAGE_TOPIC: debezium_connect_offsets
+      STATUS_STORAGE_TOPIC: debezium_connect_statuses
+      CONFIG_STORAGE_REPLICATION_FACTOR: 1
+      OFFSET_STORAGE_REPLICATION_FACTOR: 1
+      STATUS_STORAGE_REPLICATION_FACTOR: 1
+      KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+      VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
       CONNECT_REST_ADVERTISED_HOST_NAME: connect
-      CONNECT_PLUGIN_PATH: /kafka/connect,/usr/share/confluent-hub-components
+      CONNECT_PLUGIN_PATH: /kafka/connect,/kafka/external_libs
     volumes:
       - ./data:/data
       - ./data/plugins:/kafka/connect
