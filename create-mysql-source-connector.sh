@@ -13,11 +13,19 @@ curl -X POST http://localhost:8083/connectors \
       "database.user": "debezium",
       "database.password": "dbz",
       "database.server.id": "85744",
-      "topic.prefix": "zalvadora_local_2",
+      "database.server.name": "mysql_server",
+      "topic.prefix": "Analytic",
       "database.include.list": "zalvadora_local_2",
+      "table.include.list": "zalvadora_local_2.users",
       "include.schema.changes": "true",
       "schema.history.internal.kafka.bootstrap.servers": "kafka:9092",
-      "schema.history.internal.kafka.topic": "schema-changes.zalvadora_local_2"
+      "schema.history.internal.kafka.topic": "schema-changes.zalvadora_local_2",
+      "database.allowPublicKeyRetrieval": "true",
+      "snapshot.mode": "initial",
+      "database.history.kafka.topic": "dbhistory.zalvadora_local_2",
+      "tombstones.on.delete": "true",
+      "snapshot.locking.mode": "none",
+      "include.query": "true"
     }
   }'
 
