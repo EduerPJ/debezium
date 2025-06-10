@@ -37,6 +37,10 @@ services:
         curl -L -o mysql-connector-j-8.3.0.jar https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/8.3.0/mysql-connector-j-8.3.0.jar
         cp mysql-connector-j-8.3.0.jar /kafka/connect/jdbc/
 
+        # Download RedShift JDBC driver
+        curl -L -o redshift-jdbc42-2.1.0.9.jar https://s3.amazonaws.com/redshift-downloads/drivers/jdbc/2.1.0.9/redshift-jdbc42-2.1.0.9.jar
+        cp redshift-jdbc42-2.1.0.9.jar /kafka/connect/jdbc/
+
         # Download and install Debezium MySQL connector
         curl -L -o debezium-connector-mysql-2.5.0.Final-plugin.tar.gz https://repo1.maven.org/maven2/io/debezium/debezium-connector-mysql/2.5.0.Final/debezium-connector-mysql-2.5.0.Final-plugin.tar.gz
         mkdir -p /kafka/connect/debezium-mysql
