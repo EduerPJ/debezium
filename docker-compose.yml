@@ -37,9 +37,6 @@ services:
         curl -L -o mysql-connector-j-8.3.0.jar https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/8.3.0/mysql-connector-j-8.3.0.jar
         cp mysql-connector-j-8.3.0.jar /kafka/connect/jdbc/
 
-        # Copy SQLite driver to JDBC directory
-        cp /kafka/connect/sqlite-jdbc-3.44.1.0.jar /kafka/connect/jdbc/
-
         # Download and install Debezium MySQL connector
         curl -L -o debezium-connector-mysql-2.5.0.Final-plugin.tar.gz https://repo1.maven.org/maven2/io/debezium/debezium-connector-mysql/2.5.0.Final/debezium-connector-mysql-2.5.0.Final-plugin.tar.gz
         mkdir -p /kafka/connect/debezium-mysql
@@ -77,22 +74,3 @@ services:
     environment:
       KAFKA_CLUSTERS_0_NAME: default
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
-
-  sqlite-shell:
-    image: nouchka/sqlite3:latest
-    container_name: sqlite-shell
-    volumes:
-      - ./data:/data
-    entrypoint: tail -f /dev/null
-
-  sqlite-web:
-      image: coleifer/sqlite-web
-      container_name: sqlite-web
-      depends_on:
-        - connect
-      ports:
-        - "8081:8080"
-      volumes:
-        - ./data:/root/sqlite
-      working_dir: /root/sqlite
-      command: ["sqlite_web", "--host", "0.0.0.0", "cambios.db"]

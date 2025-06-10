@@ -1,0 +1,78 @@
+# Archivos compilados
+*.class
+*.jar
+*.war
+*.ear
+
+# Directorios de construcción
+target/
+build/
+out/
+bin/
+
+# Archivos de IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+.classpath
+.project
+.settings/
+.vscode/
+
+# Archivos de Maven
+.mvn/
+mvnw
+mvnw.cmd
+
+# Archivos de Gradle
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+
+# Archivos de log
+*.log
+logs/
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de configuración local
+application-local.properties
+application-local.yml
+application-dev.properties
+application-dev.yml
+
+# Archivos de Docker
+.docker/
+
+# Archivos temporales
+*.tmp
+*.temp
+*.swp
+*~
+
+# Archivos de cobertura de código
+coverage/
+.coverage
+htmlcov/
+
+# Archivos de caché
+.cache/
+.npm/
+node_modules/
+
+# Archivos de entorno
+.env
+.env.local
+.env.*.local
+
+# Archivos de dependencias
+node_modules/
+jspm_packages/
+bower_components/
+
+# Archivos de documentación generada
+docs/_build/
+site/
