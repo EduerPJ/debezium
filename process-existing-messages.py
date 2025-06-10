@@ -43,11 +43,11 @@ def get_kafka_messages():
         '--bootstrap-server', 'localhost:9092',
         '--topic', 'Analyticdb1.zalvadora_local_2.users',
         '--from-beginning',
-        '--timeout-ms', '5000'
+        '--timeout-ms', '30000'
     ]
     
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=35)
         if result.stdout:
             return result.stdout.strip().split('\n')
         return []
