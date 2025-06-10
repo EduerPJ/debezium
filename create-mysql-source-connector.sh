@@ -8,7 +8,7 @@ curl -X POST http://localhost:8083/connectors \
     "name": "mysql-source",
     "config": {
       "connector.class": "io.debezium.connector.mysql.MySqlConnector",
-      "database.hostname": "192.168.101.6",
+      "database.hostname": "192.168.101.9",
       "database.port": "3306",
       "database.user": "debezium",
       "database.password": "dbz",
@@ -17,11 +17,13 @@ curl -X POST http://localhost:8083/connectors \
       "topic.prefix": "Analyticdb1",
       "database.include.list": "zalvadora_local_2",
       "table.include.list": "zalvadora_local_2.users",
-      "column.include.list": "id, firstname, lastname, email, status",
+      "column.include.list": "zalvadora_local_2.users.id,zalvadora_local_2.users.firstname,zalvadora_local_2.users.lastname,zalvadora_local_2.users.email,zalvadora_local_2.users.status",
       "schema.history.internal.kafka.bootstrap.servers": "kafka:9092",
       "schema.history.internal.kafka.topic": "schema-changes.zalvadora_local_2",
-      "custom.metric.tags": "k1=v1",
-      "event.converting.failure.handling.mode": "skip"
+      "snapshot.mode": "initial",
+      "include.schema.changes": "false",
+      "key.converter.schemas.enable": "false",
+      "value.converter.schemas.enable": "false"
     }
   }'
 

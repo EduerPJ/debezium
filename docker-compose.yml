@@ -33,6 +33,10 @@ services:
         mkdir -p /kafka/connect/jdbc
         cp kafka-connect-jdbc-10.7.4.jar /kafka/connect/jdbc/
 
+        # Download MySQL JDBC driver
+        curl -L -o mysql-connector-j-8.3.0.jar https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/8.3.0/mysql-connector-j-8.3.0.jar
+        cp mysql-connector-j-8.3.0.jar /kafka/connect/jdbc/
+
         # Copy SQLite driver to JDBC directory
         cp /kafka/connect/sqlite-jdbc-3.44.1.0.jar /kafka/connect/jdbc/
 
