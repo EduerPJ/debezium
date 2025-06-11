@@ -1,13 +1,5 @@
 #!/bin/bash
 source .env
-echo "⏳ Verificando si el conector ya existe..."
-
-if curl -s http://localhost:8083/connectors/mysql-source-optimized/status > /dev/null 2>&1; then
-    echo "🔄 El conector existe. Reiniciándolo..."
-    curl -X POST http://localhost:8083/connectors/mysql-source-optimized/restart
-    echo -e "\n✅ Conector reiniciado."
-else
-    echo "📝 El conector no existe. Procediendo a crearlo..."
 
 echo "⏳ Creando conector Debezium MySQL..."
 
